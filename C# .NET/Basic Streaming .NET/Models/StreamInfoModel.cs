@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Basic_Streaming.NET.Models
 {
+    /// <summary>
+    /// Model for representing stream information in the UI
+    /// </summary>
     public class StreamInfoModel : INotifyPropertyChanged
     {
 
         private string _deviceName;
-
         public string DeviceName
         {
             get { return _deviceName; }
@@ -23,7 +20,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private string _pipelineStatus;
-
         public string PipelineStatus
         {
             get { return _pipelineStatus; }
@@ -34,8 +30,31 @@ namespace Basic_Streaming.NET.Models
             }
         }
 
-        private int _sensorsConnected;
+        private int _selectedSensors;
 
+        public int SelectedSensors
+        {
+            get { return _selectedSensors; }
+            set
+            {
+                _selectedSensors = value;
+                RaisePropertyChanged(nameof(SelectedSensors));
+            }
+        }
+
+        private int _selectedChannels;
+
+        public int SelectedChannels
+        {
+            get { return _selectedChannels; }
+            set
+            {
+                _selectedChannels = value;
+                RaisePropertyChanged("SelectedChannels");
+            }
+        }
+
+        private int _sensorsConnected;
         public int SensorsConnected
         {
             get { return _sensorsConnected; }
@@ -47,7 +66,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private int _totalChannels;
-
         public int TotalChannels
         {
             get { return _totalChannels; }
@@ -59,7 +77,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private string _streamTime;
-
         public string StreamTime
         {
             get { return _streamTime; }
@@ -71,7 +88,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private int _packetsLost;
-
         public int PacketsLost
         {
             get { return _packetsLost; }
@@ -83,7 +99,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private int _framesCollected;
-
         public int FramesCollected
         {
             get { return _framesCollected; }
@@ -94,8 +109,8 @@ namespace Basic_Streaming.NET.Models
             }
         }
 
+        // Notifies UI when there's been a change
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

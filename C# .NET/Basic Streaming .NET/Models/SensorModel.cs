@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace Basic_Streaming.NET.Models
 {
+    /// <summary>
+    /// Model for representing sensors in the UI
+    /// </summary>
     public class SensorModel : INotifyPropertyChanged
     {
-
         private string _sensorName;
-
         public string SensorName
         {
             get { return _sensorName; }
@@ -23,7 +19,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private int _sensorId;
-
         public int SensorId
         {
             get { return _sensorId; }
@@ -35,7 +30,6 @@ namespace Basic_Streaming.NET.Models
         }
 
         private int _pairNum;
-
         public int PairNum
         {
             get { return _pairNum; }
@@ -46,8 +40,8 @@ namespace Basic_Streaming.NET.Models
             }
         }
 
+        // Notifies UI when there's been a change
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void RaisePropertyChanged(string propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
@@ -56,16 +50,5 @@ namespace Basic_Streaming.NET.Models
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
     }
 }

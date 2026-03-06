@@ -2,18 +2,35 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DelsysAPI" Version="2.8.1.1051-Main" />
+    <None Remove="delsys-logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+
+    <PackageReference Include="Delsys.Drivers" Version="1.2.2.417-main" />
+
+    <PackageReference Include="Delsys.Signals" Version="2.1.1.28-main" />
+
+    <PackageReference Include="DelsysAPI" Version="2.9.7.1088-Main" />
+
+    <PackageReference Include="Filtering" Version="2.1.1.28-main" />
+
     <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="delsys-logo.png" />
+  </ItemGroup>
 	<PropertyGroup>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ApplicationIcon>delsys-logo-icon.ico</ApplicationIcon>
 	</PropertyGroup>
 	
 </Project>

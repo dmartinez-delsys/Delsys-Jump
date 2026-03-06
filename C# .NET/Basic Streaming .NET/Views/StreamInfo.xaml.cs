@@ -36,8 +36,8 @@ namespace Basic_Streaming.NET.Views
             Model = new StreamInfoModel
             {
                 DeviceName = "N/A",
-                SensorsConnected = 0,
-                TotalChannels = 0,
+                SelectedSensors = 0,
+                SelectedChannels = 0,
                 PipelineStatus = "N/A",
                 StreamTime = "0.0 seconds",
                 PacketsLost = 0,

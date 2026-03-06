@@ -65,7 +65,7 @@ class PlottingManagement():
                         print("Index Error Occurred: vispyPlot()")
 
     def updatemetrics(self):
-        self.metrics.framescollected.setText(str(self.DataHandler.packetCount))
+        self.metrics.framescollected.setText(str(self.base.get_frame_number()))
 
     def resetmetrics(self):
         self.metrics.framescollected.setText("0")

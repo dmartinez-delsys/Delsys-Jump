@@ -2,17 +2,17 @@
 
 This is an example Python GUI application that uses the DelsysAPI AeroPy Layer to demonstrate functionality that users can implement in their own code. This example allows a user to connect to the base station, pair new sensors, scan for paired sensors, then stream EMG data visualized by plots. 
 
-This version has been tested using [Python 3.12.0](https://www.python.org/downloads/release/python-3120/).
+This version has been tested using [Python 3.14.3](https://www.python.org/downloads/release/python-3143/).
 
 See [AeroPy Documentation](#AeroPy-Documentation) 
 
 ## Getting Started
-1. Install Python here: [Python 3.12.0](https://www.python.org/downloads/release/python-3120/).
+1. Install Python here: [Python 3.14.3](https://www.python.org/downloads/release/python-3143/).
 2. Navigate to the `/Delsys-Python-Demo` base directory
 3. Install dependencies using `python -m pip install -r requirements.txt`
 4. Open `/AeroPy/TrignoBase.py` and copy/paste the key/license strings provided by Delsys Inc. during system purchase. Contact [support](https://delsys.com/support/) if you have any issues.
 5. If you are using an IDE, set up your python interpreter/virtual environment from the settings.
-6. Make sure the Trigno base station or lite are plugged in, then Run `DelsysPythonDemo.py`
+6. Make sure the Trigno Base, Lite, or  Centro are plugged in, then Run `DelsysPythonDemo.py`
 
 
 ## Example App Instructions
@@ -94,11 +94,36 @@ Initial call to the Trigno Base. Sets up a connection to the base using the user
 
 &nbsp;<br>
 
+```C#
+public string GetTrignoReceiverType()
+```
+Get the current Trigno recevier connected via USB. Types include: Trigno Centro, Trigno Base Station, and Trigno Lite.
+
+&nbsp;<br>
+
+```C#
+public bool IsLinkConnected()
+```
+Return true if a Trigno Link device is currently connected via USB. 
+
+&nbsp;<br>
+
 ### Sensor Management
 ```C#
 public Task ScanSensors()
 ```
 Scan for previously paired sensors (RF).
+Pipeline must be in the Off or Connected State to run this command 
+
+&nbsp;<br> 
+
+```C#
+public Task ScanSensors(bool scanLinkViaANT, string[] trignoLinkDevicesToScanFor = null)
+```
+Scan for previously paired sensors (RF) and (optionally) Trigno Link Devices. If the first argument is true, Trigno Link
+will scan in ANT mode, otherwise in BLE mode. The second argument is a list of strings represneting the devices to scan for.
+In the python demo app, this list is determined based on the Trigno Link devices selected in the GUI.
+Use GetLinkDeviceNames method to get the exact strings used for this list.
 Pipeline must be in the Off or Connected State to run this command 
 
 &nbsp;<br> 
@@ -110,6 +135,20 @@ Get an array of sensor objects for all Trigno sensors that were found during a s
 
 &nbsp;<br> 
 
+```C#
+public string[] GetLinkDeviceNames(bool useANT)
+```
+Get the device string options that Trigno Link supports either through ANT or BLE
+
+&nbsp;<br> 
+
+```C#
+public Component[] GetSensors()
+```
+Get a list of Trigno sensor objects (Component) that are currently connected to the system (Paired and found in a scan).
+See SensorTrignoRF (of type Component) section below to see available properties for these objects.
+
+&nbsp;<br> 
 
 ```C#
 public Task<bool> PairSensor()
@@ -133,6 +172,7 @@ Once a sensor has been paired, you will only need to turn on the sensor and begi
 pair_number = 1
 pair_confirmation = TrigBase.PairSensor(pair_number)
 ```
+Then introduce a magnet to the physical sensor you are attempting to pair. pair_confirmation will be true if a pair was successful.
 
 &nbsp;<br>
 
@@ -147,6 +187,13 @@ After running the PairSensor() command, use this boolean to check if the sensor 
 public async void CancelPair()
 ```
 Called while a pair is in progress and cancel
+
+&nbsp;<br> 
+
+```C#
+public int GetSensorPairNumber(int sensorNum)
+```
+Get pair number of a sensor at a specific index in the sensor list.
 
 &nbsp;<br> 
 
@@ -169,6 +216,21 @@ public SensorTrignoRf GetSensorObject(int sensorNo)
 Get the sensor object of the sensor at the index sensorNo 
 
 &nbsp;<br>  
+```C#
+public Dictionary<string, string>[] GetSensorChannelInfo(int sensorNo)
+```
+Get a list of channels for the sensor at index sensorNo. Each index (channel) is a Dictionary where the property is the key (see ChannelTrigno section below)
+and the value is the property's value for that channel.
+```Python
+channel_info = self.TrigBase.GetSensorChannelInfo(sensorIndex)
+for c in channel_info:
+    channel_name = c["Name"]
+    channel_enabled = c["Enabled"] == 'True'
+    channel_type = c["Type"]
+    channel_sample_rate = float(c["Sample Rate"])
+    channel_guid = c["Guid"]
+```
+&nbsp;<br>
 ```C#
 public List<string> GetAllSampleModes()
 ```
@@ -202,20 +264,100 @@ Return the list of sensor modes available to the sensor at index sensorSelected
 &nbsp;<br>  
 
 ### Pre Data Collection Configuration
+```C#
+public void Configure()
+```
+Will configure pipeline for raw data output on all scanned sensors. Uses any advanced trigger configurations set with the SetTrigger method. Includes no transforms and a default throughput of 2 frames
+&nbsp;<br>  
 
 ```C#
 public void Configure(bool starttrigger = false, bool stoptrigger = false)
 ```
-Configure pipeline for raw data output on all connected sensors. To enable triggering (start/stop) pass two 'True' booleans to this method. If no arguments are provided, the system will be set up without start/stop triggering enabled. Pipeline will transition to Armed
+Used for Trigno Base Station only. Configure pipeline for raw data output on all connected sensors. To enable triggering (start/stop) pass two 'True' booleans to this method. If no arguments are provided, the system will be set up without start/stop triggering enabled. Pipeline will transition to Armed
 
-&nbsp;<br>  
-
+ 
 
 ```C#
 public bool IsPipelineConfigured()
 ```
 Returns true if the DelsysAPI Pipeline is currently configured for data streaming (ready for Start).
-&nbsp;<br>  
+&nbsp;<br> 
+
+### Triggering  Configuration
+
+#### Trigno Base Station
+Configure the start/stop triggers using the "public void Configure(bool starttrigger = false, bool stoptrigger = false)" method
+defined above.
+#### Trigno Centro
+Centro has BNC inputs on the back to enable triggering, synchronization, and/or integrations with other software.
+
+
+```C#
+public void SetTrigger(bool isEnabled, byte channel, bool is5Volts, bool isRisingEdge, byte triggerType)
+```
+```C#
+public void SetSyncOutput(bool isEnabled, byte channel, bool is5Volts, uint frequency)
+```
+Configures an advanced hardware trigger for a Trigno Centro system.
+These trigger settings are applied only when the system is configured using Configure() without arguments (or when only transform and frameThroughput are provided).
+You may call this method multiple times to configure different trigger types.
+If the same trigger type is set more than once, the most recent configuration overrides the previous one.
+
+#### Parameters
+
+| Name          | Type  | Description |
+|---------------|-------|-------------|
+| isEnabled     | bool  | Enables (`true`) or disables (`false`) the trigger. |
+| channel       | int   | 1-indexed hardware channel assigned to the trigger. |
+| is5Volts      | bool  | `true` → 5 V, `false` → 3.3 V. |
+| isRisingEdge  | bool  | `true` → rising edge, `false` → falling edge. |
+| triggerType   | int   | 0 = Start In, 1 = Start Out, 2 = Stop In, 3 = Stop Out. |
+
+#### Trigger Behavior
+
+- Supports configuring start/stop input triggers, start/stop output triggers, and sync outputs.
+- Each trigger type can be configured once; repeated calls overwrite previous settings.
+- Trigger configurations take effect only with simplified system configuration via Configure().
+
+&nbsp;<br>
+
+### Analog Input Configuration
+
+```C#
+public void SetAnalogInputChannel(byte channelIndex, string channelName, byte inputRange)
+```
+ Set the name and input range for a single valid analog input channel
+
+| Name          | Type   | Description                            |
+|---------------|--------|----------------------------------------|
+| channelIndex  | byte   | 1-indexed channel location             |
+| channelName   | string | Channels name                          |
+| inputRange    | byte   | +/-: 0 = 10V, 1 = 5V, 2 = 1V, 3 = 0.1V |
+&nbsp;<br>
+
+```C#
+public void SetAnalogInputConfig(byte numChannels, bool isMicEnabled)
+```
+ Set the name and input range for a single valid analog input channel
+
+| Name           | Type | Description                            |
+|----------------|------|----------------------------------------|
+| numChannels    | byte | The number of channels enabled. Valid arguments are either 1 for Microphone, or 1,2,4, or 6 for DSUB-15 connector            |
+| isMicEnabled   | bool | True if the Microphone port is selected. False if the DSUB-15 port is selected                         |
+
+&nbsp;<br>
+
+```C#
+public void ApplyAnalogInputSettings() 
+```
+Apply all of the analog input settings that were (optionality) applied using above methods.
+&nbsp;<br>
+
+```C#
+public string GetAnalogInputSettings()
+```
+Get the current analog input settings applied.
+&nbsp;<br>
 
 ### Data Collection Management
 By default, this application will stream data from all channels based on what sensor(s) is/are connected (previously paired & scanned in) along with the mode the sensor(s) is/are operating in (See SetSampleMode above). 
@@ -259,7 +401,21 @@ This retrieves the data from the data buffer after the `Start()` method is calle
 &nbsp;<br>  
 
 ```C#
+public Dictionary<string, List<double>> PollDataByString()
+```
+This retrieves the data from the data buffer after the `Start()` method is called. Every time this method is called it will return the data, then clear the internal data queue. The return type is a dictionary output where channel GUID (as a string) is the key and the channel data is the value
+
+&nbsp;<br>  
+
+```C#
 public Dictionary<Guid, List<(double, double)>> PollYTData()
+```
+This retrieves the data from the data buffer after the `Start(True)` method is called. Every time this method is called it will return the data, then clear the internal data queue. The return type is a dictionary output where channel GUID is the key and the channel data is the value
+
+&nbsp;<br>  
+
+```C#
+public Dictionary<string, List<(double, double)>> PollYTDataByString()
 ```
 This retrieves the data from the data buffer after the `Start(True)` method is called. Every time this method is called it will return the data, then clear the internal data queue. The return type is a dictionary output where channel GUID is the key and the channel data is the value
 
@@ -299,6 +455,18 @@ public string GetPipelineState()
 Returns the current state of the RF pipeline
 
 &nbsp;<br>  
+```C#
+public int GetFrameCount()
+```
+Get the count of frames processed. Resets to 0 upon starting a stream. Increments when frames are deposited into buffer, not when polled.
+&nbsp;<br>  
+```C#
+public bool IsReadyToStartStream()
+```
+Check if the DelsysAPI is ready to be configured and streamed. Returns True if there is at least one RF sensor connected AND the pipeline is connected or armed
+
+&nbsp;<br>  
+
 ```C#
 public int GetTotalPackets()
 ```
@@ -404,10 +572,4 @@ Certain Trigno channels exist during data streaming that have no use for the use
 &nbsp;<br>
 &nbsp;<br>
 
-# Centro Trigger Configuration
 
-Trigno Centro has BNC inputs on the back to enable synchronization and integrations with other software. See image below for the default trigger configuration for Aero. 
-
-![img.png](Images/centro_trigger_config.png)
-&nbsp;<br>
-*When triggering is enabled, both input channels listen for rising signal at 3.3V. Sync output has a frequency of 74Hz at 3.3V.

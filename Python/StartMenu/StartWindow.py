@@ -10,8 +10,30 @@ class StartWindow(QWidget):
         QWidget.__init__(self)
         self.controller = controller
         grid = QGridLayout()
-        self.setStyleSheet("background-color:#3d4c51;")
-        self.setWindowTitle("Start Menu")
+        self.setStyleSheet('''
+            QWidget {
+                background-color: #1F253D;
+            }
+            QCheckbox {
+                spacing: 0;
+            }
+    
+            QCheckBox::indicator {
+                width: 18px;
+                height: 18px;
+            }
+            QCheckBox::indicator:unchecked {
+                image: url(./Images/unchecked.png);
+            }
+            
+            QCheckBox::indicator:checked {
+                image: url(./Images/checked.png);
+            }
+            
+            QLabel { color: white; }
+        ''')
+        self.setWindowTitle("Python Demo")
+        self.setWindowIcon(QIcon("./Images/window_icon.png"))
 
         imageBox = QVBoxLayout()
         self.im = QPixmap("./Images/delsys.png")
@@ -40,21 +62,21 @@ class StartWindow(QWidget):
         button.setToolTip('Collect Data')
         button.objectName = 'Collect'
         button.clicked.connect(self.Connect_Button_Callback)
-        button.setFixedSize(200, 100)
-        button.setStyleSheet('QPushButton {color: white;}')
+        button.setFixedSize(250, 50)
+        button.setStyleSheet('QPushButton {color: white; background-color: #3D885C}')
         buttonBox.addWidget(button)
+        grid.addLayout(buttonBox, 2, 0)
 
         plotBox = QHBoxLayout()
 
-        plot_label = QLabel('Display Plot')
-        plot_label.setStyleSheet('color: white')
-        plot_label.setAlignment(Qt.AlignVCenter | Qt.AlignRight)
-        plotBox.addWidget(plot_label)
         self.plot_enabled = QCheckBox()
         plotBox.addWidget(self.plot_enabled)
-        plotBox.setAlignment(Qt.AlignHCenter)
-        grid.addLayout(buttonBox, 2, 0)
-        grid.addLayout(plotBox, 3, 0)
+        plot_label = QLabel('Display Plot', self)
+        plot_label.setFixedHeight(40)
+        plot_label.setStyleSheet('color: white;')
+        plot_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        plotBox.addWidget(plot_label)
+        grid.addLayout(plotBox, 3, 0, alignment=Qt.AlignHCenter)
 
         self.setLayout(grid)
         self.setFixedSize(self.width(), self.height())

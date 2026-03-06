@@ -38,7 +38,7 @@ namespace Basic_Streaming.NET.Views
 
             _deviceStreaming = deviceStreaming;
 
-            _deviceStreaming.btn_Reset.IsEnabled = true;
+            // _deviceStreaming.btn_Reset.IsEnabled = true;
 
         }
 
@@ -74,9 +74,9 @@ namespace Basic_Streaming.NET.Views
                     return;
                 }
 
-                new ToastContentBuilder()
-                .AddText($"Sensor {textbox_ForSensorNumber.Text} has been paired!")
-                .Show();
+                //new ToastContentBuilder()
+                //.AddText($"Sensor {textbox_ForSensorNumber.Text} has been paired!")
+                //.Show();
 
                 textbox_ForSensorNumber.Text = "";
 
@@ -108,7 +108,7 @@ namespace Basic_Streaming.NET.Views
 
             mainPageButtonAndResetButtonToggle(false);
 
-            _loadingIcon = new LoadingIcon("Scanning for pair requests...", IconMargin, msgMargin);
+            _loadingIcon = new LoadingIcon("Awaiting Pair Request...", IconMargin, msgMargin);
             MainPanel.Children.Add(_loadingIcon);
 
             cancellationToken = new System.Threading.CancellationTokenSource();
@@ -116,9 +116,9 @@ namespace Basic_Streaming.NET.Views
             // The number of components cannot exceed the number of available/supported slots.
             if (_pipeline.TrignoRfManager.Components.Count <= _pipeline.TrignoRfManager.SupportedNumberOfSlots())
             {
-                return await _pipeline.TrignoRfManager.AddTrignoComponent(cancellationToken.Token, sensorNumber, false);
+                return await _pipeline.TrignoRfManager.AddTrignoComponent(cancellationToken.Token, sensorNumber, true);
             }
-            System.Diagnostics.Debug.WriteLine("# of components after pair: " + _pipeline.TrignoRfManager.Components.Count);
+            Debug.WriteLine("# of components after pair: " + _pipeline.TrignoRfManager.Components.Count);
 
             // If it reaches this point, then the user has more activated sensors than supported slots.
             return false;
@@ -134,19 +134,22 @@ namespace Basic_Streaming.NET.Views
 
         private void mainPageButtonAndResetButtonToggle(bool shouldTurnOn)
         {
-            _mainWindow.btn_backToMainPageButton.IsEnabled = shouldTurnOn;
-
-            _deviceStreaming.btn_Reset.IsEnabled = shouldTurnOn;
+            // TODO Back To Main Page button currently disabled due to bug in RemovePipeline not removing Link
+            // _mainWindow.btn_backToMainPageButton.IsEnabled = shouldTurnOn;
         }
 
-        private void clk_Cancel(object sender, RoutedEventArgs e)
+        private void clk_Finish(object sender, RoutedEventArgs e)
         {
-            cancellationToken.Cancel();
+            if(cancellationToken != null)
+            {
+                cancellationToken.Cancel();
+            }
             (this.Parent as Grid).Children.Remove(this);
 
             mainPageButtonAndResetButtonToggle(true);
 
-            _deviceStreaming.clk_Scan(new object(), new RoutedEventArgs());
+            _deviceStreaming.btn_PairSensors.IsEnabled = true;
+            _deviceStreaming.btn_ScanSensors.IsEnabled = true;
 
             return;
         }

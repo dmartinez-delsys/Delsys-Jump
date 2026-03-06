@@ -12,22 +12,22 @@ class CollectionMetricsManagement():
         collectionvaluesLayout = QVBoxLayout()
 
         self.pipelinestatelabel = QLabel("-")
-        self.pipelinestatelabel.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        self.pipelinestatelabel.setAlignment(Qt.AlignLeft)
         self.pipelinestatelabel.setStyleSheet("color:white")
         collectionvaluesLayout.addWidget(self.pipelinestatelabel)
 
         self.sensorsconnected = QLabel('-')
-        self.sensorsconnected.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        self.sensorsconnected.setAlignment(Qt.AlignLeft)
         self.sensorsconnected.setStyleSheet("color : white ")
         collectionvaluesLayout.addWidget(self.sensorsconnected)
 
         self.totalchannels = QLabel('-')
-        self.totalchannels.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        self.totalchannels.setAlignment(Qt.AlignLeft)
         self.totalchannels.setStyleSheet("color : white ")
         collectionvaluesLayout.addWidget(self.totalchannels)
 
         self.framescollected = QLabel('-')
-        self.framescollected.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        self.framescollected.setAlignment(Qt.AlignLeft)
         self.framescollected.setStyleSheet("color : white ")
         collectionvaluesLayout.addWidget(self.framescollected)
         collectionValuesPanel.setFixedWidth(200)

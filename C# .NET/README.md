@@ -39,4 +39,8 @@ https://delsys.com/api/
     Note: The pipeline must be reset if you want to pair/scan/select sensors again. If you are using the same sensor configuration, you may start/stop the data streaming continuously without resetting.
 
 
+### Default Trigno Centro Triggering Configuration
 
+BNC 1: Start Input (Rising at 3.3V)&nbsp;<br>
+BNC 2: Stop Input (Rising at 3.3V)&nbsp;<br>
+BNC 4: Sync Output (74Hz)

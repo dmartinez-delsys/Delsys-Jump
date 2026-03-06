@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Aero;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Basic_Streaming.NET.Views
@@ -8,7 +9,6 @@ namespace Basic_Streaming.NET.Views
     /// </summary>
     public partial class LoadingIcon : UserControl
     {
-
         public LoadingIcon(string msg, int[]? IconMargin = null, int[]? msgMargin = null)
         {
             InitializeComponent();
@@ -52,6 +52,11 @@ namespace Basic_Streaming.NET.Views
             {
                 LoadMsg.Margin = new Thickness(msgONLYMargin[0], msgONLYMargin[1], msgONLYMargin[2], msgONLYMargin[3]);
             }
+        }
+
+        public void SetMessageColumnSpan (int columnSpan)
+        {
+            Grid.SetColumn(LoadMsg, columnSpan);
         }
     }
 }

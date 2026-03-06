@@ -1,3 +1,5 @@
+[This application does not currently supprot Trigno Centro]
+
 # Delsys API RF integration with Unity
 
 ## Requirements
