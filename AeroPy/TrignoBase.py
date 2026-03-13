@@ -6,6 +6,8 @@ import time
 from pythonnet import load
 from enum import Enum
 from dataclasses import dataclass
+from dotenv import load_dotenv
+import os
 
 from Export.CsvWriter import CsvWriter
 
@@ -17,8 +19,9 @@ clr.AddReference("System.Collections")
 
 from Aero import AeroPy
 
-key = ""
-license = ""
+load_dotenv()
+key = os.getenv("KEY")
+license = os.getenv("LICENSE")
 
 class TrignoType(Enum):
     LITE = 0
