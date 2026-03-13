@@ -1,6 +1,0 @@
-numpy
-pythonnet
-plotly
-pandas
-ipykernel
-nbformat
