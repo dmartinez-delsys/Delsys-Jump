@@ -5,4 +5,4 @@ venv/
 */__pycache__/
 *.vs
 *.csv
-AeroPy/TrignoBase.py
+.env
